@@ -23,11 +23,11 @@
     toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2600);
   }
 
-  /* ============ 每日一测 · 随缘添灯（与易学馆同款模式） ============
-   * 每日免费分析一次；用罄后再点“开始分析”，先弹打赏浮层，
+  /* ============ 每日两测 · 随缘添灯（与易学馆同款模式） ============
+   * 每日免费分析两次；用罄后再点“开始分析”，先弹打赏浮层，
    * 客户随喜（扫码自证）后当日放行。额度记在本机，清缓存可重置，
    * 与易学馆一致的“诚信问心”机制。 */
-  var DAILY_FREE = 1;
+  var DAILY_FREE = 2;
   var QUOTA_KEY = 'NE_quota_v1';
   var pendingPhone = null;
   var payImgChecked = false;
@@ -64,7 +64,7 @@
   }
 
   function openPay() {
-    $('paySub').innerHTML = '今日免费一测已用罄 · 再测一回，请先添灯一盏。';
+    $('paySub').innerHTML = '今日两次免费已用罄 · 再测一回，请先添灯一盏。';
     $('payMsg').innerHTML =
       '一测一灯，灯亮号明。此测确有所问，请君<b>随缘添一盏灯</b>，随即放行；' +
       '随喜之后，今日随测随行，明日此时免费数缘复满。若暂不测，合上即可，来去自在。';
