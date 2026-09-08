@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="数字能量学手机号磁场分析：报上号码与生辰，拆解八星磁场，结合八字喜用神，找到适合你的本命幸运数字与尾号建议。传统文化娱乐参考。">
+<title>数字能量馆 · 手机号磁场 × 本命幸运数字</title>
+<script src="lib/lunar.js"></script>
+<script src="data.js"></script>
+<script src="astro.js"></script>
+<script src="core.js"></script>
+<script src="app.js"></script>
+<style>
+  :root{ --ink:#241a10; --gold:#c9a24b; --paper:#f7eeda; --paper2:#efe0bd; --red:#a33327; --blue:#274a5e; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:"KaiTi","STKaiti","楷体","SimSun",serif; color:var(--ink);
+    background:
+      radial-gradient(ellipse at 85% 0%, #3d5a68 0%, transparent 55%),
+      radial-gradient(ellipse at 8% 100%, #4a3520 0%, transparent 55%),
+      linear-gradient(160deg,#101b22 0%,#24323b 55%,#101b22 100%);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:22px 12px 44px;
+  }
+  /* 玄学馆导航（空时不显示） */
+  .xz-nav{ width:100%; max-width:1000px; margin:0 auto 14px; display:flex; align-items:center;
+    justify-content:space-between; gap:6px 10px; flex-wrap:wrap;
+    background:linear-gradient(180deg,rgba(22,12,4,.78),rgba(22,12,4,.58));
+    border:1px solid rgba(201,162,75,.55); border-radius:999px;
+    padding:7px 14px 7px 18px; box-shadow:0 6px 18px rgba(0,0,0,.35); }
+  .xz-nav .xz-brand{ font-weight:bold; font-size:16px; letter-spacing:3px; color:#f0d58a;
+    text-decoration:none; white-space:nowrap; }
+  .xz-nav .xz-brand small{ font-size:11px; letter-spacing:2px; color:#cbb888; font-weight:normal; margin-left:8px; }
+  .xz-nav .xz-links{ display:flex; gap:2px; flex-wrap:wrap; }
+  .xz-nav .xz-links a{ font-family:inherit; font-size:13.5px; letter-spacing:2px; color:#e6d6ab;
+    text-decoration:none; padding:4px 13px; border-radius:999px; white-space:nowrap; }
+  .xz-nav .xz-links a:hover{ color:#fff6e0; background:rgba(201,162,75,.3); }
+  .xz-nav .xz-links a.xz-on{ background:linear-gradient(180deg,#b53c2e,#8c2418); color:#fff6e0; }
+
+  .frame{
+    width:100%; max-width:1000px;
+    background:linear-gradient(180deg,var(--paper) 0%,var(--paper2) 100%);
+    border:2px solid var(--gold); border-radius:12px;
+    box-shadow:0 14px 46px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.3);
+    padding:28px 26px 30px; position:relative;
+  }
+  .frame::before,.frame::after{
+    content:"☰ ☱ ☲ ☳ ☴ ☵ ☶ ☷"; position:absolute; left:0; right:0;
+    text-align:center; color:rgba(201,162,75,.5); font-size:13px; letter-spacing:6px; pointer-events:none;
+  }
+  .frame::before{ top:-19px; }
+  .frame::after{ bottom:-19px; content:"✦ 号 码 随 身 · 磁 场 流 转 ✦"; font-size:13px; letter-spacing:4px; }
+  header{ text-align:center; margin-bottom:4px; }
+  .plaque-top{ font-size:13px; letter-spacing:7px; color:#a5823a; margin-bottom:9px; }
+  .shop-name{ font-size:34px; font-weight:bold; letter-spacing:8px; color:var(--red);
+    text-shadow:1px 1px 0 rgba(255,255,255,.55); }
+  .plaque-line{ margin-top:9px; font-size:12.5px; letter-spacing:6px; color:#9a7a3f; }
+  .motto{ margin-top:14px; font-size:14.5px; color:#6b5638; line-height:1.9; }
+  .divider{ border:none; border-top:1px dashed var(--gold); margin:18px 0; }
+
+  /* 科普三卡 */
+  .intro{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:4px; }
+  .intro-card{ background:rgba(255,255,255,.55); border:1px solid #d8c08a; border-radius:9px; padding:12px 13px; }
+  .intro-card b{ color:var(--red); font-weight:normal; letter-spacing:2px; font-size:14px; }
+  .intro-card p{ font-size:12.5px; line-height:1.85; color:#5c4a2e; margin-top:6px; }
+  .chip{ display:inline-block; font-size:11.5px; border-radius:20px; padding:1px 8px; margin:2px 2px 0 0; white-space:nowrap; }
+  .chip.g{ color:#8c2418; background:#f6e3d8; border:1px solid #d8a78f; }
+  .chip.b{ color:#2f5a70; background:#e0edf1; border:1px solid #b3cdd6; }
+  .chip.n{ color:#6b5638; background:#f0e6cd; border:1px solid #d3bd8b; }
+
+  /* 输入卡 */
+  .card{ background:rgba(255,255,255,.55); border:1px solid #dcc592; border-radius:10px; padding:16px 18px; margin-top:14px; }
+  .card-title{ font-size:16px; letter-spacing:3px; color:var(--red); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .card-title::after{ content:""; flex:1; height:1px; background:linear-gradient(90deg,var(--gold),transparent); }
+  .fld{ display:flex; flex-direction:column; gap:5px; }
+  .fld label{ font-size:13px; color:#7a6544; letter-spacing:2px; }
+  .fld label i{ font-style:normal; color:#a5823a; font-size:11px; letter-spacing:0; margin-left:6px; }
+  .form-row-phone{ display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; }
+  .form-row-phone .fld.phone{ flex:1; min-width:220px; }
+  input[type=text], input[type=date], input[type=time], select, textarea{
+    font-family:inherit; font-size:16px; color:var(--ink); padding:8px 11px;
+    border:1px solid #b99a5c; border-radius:6px; background:#fffdf6; outline:none;
+    width:100%;
+  }
+  input:focus, select:focus, textarea:focus{ border-color:var(--red); box-shadow:0 0 0 2px rgba(163,51,39,.12); }
+  textarea{ resize:vertical; min-height:62px; line-height:1.7; }
+  input.big{ font-size:21px; letter-spacing:2px; text-align:center; padding:10px 11px; }
+  .form-grid{ display:flex; flex-wrap:wrap; gap:12px 18px; align-items:flex-end; }
+  .form-grid .fld{ flex:1 1 170px; }
+  .radio-row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .radio-row label{ font-size:14px; letter-spacing:1px; display:inline-flex; align-items:center; gap:4px; cursor:pointer; color:#5c4a2e; }
+  .radio-row input{ accent-color:var(--red); width:15px; height:15px; }
+  .check-row{ font-size:12.5px; color:#8a7a5a; display:flex; align-items:center; gap:6px; margin-top:10px; cursor:pointer; line-height:1.6; }
+  .check-row input{ accent-color:var(--red); width:14px; height:14px; flex:0 0 auto; }
+  .hint{ font-size:12px; color:#8a7a5a; line-height:1.9; margin-top:10px; background:rgba(255,255,255,.35);
+    border-left:3px solid #caa85c; border-radius:0 5px 5px 0; padding:6px 10px; }
+  .btn-row{ margin-top:18px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; }
+  .btn{ font-family:inherit; font-size:17px; letter-spacing:4px; border:none; border-radius:7px; cursor:pointer;
+    padding:11px 30px; box-shadow:0 3px 0 rgba(0,0,0,.25); transition:transform .08s; }
+  .btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.25); }
+  .btn-main{ background:linear-gradient(180deg,#b53c2e,#8c2418); color:#fff6e0; }
+  .btn-ghost{ background:linear-gradient(180deg,#caa85c,#a9812f); color:#3a2a10; font-size:13px; letter-spacing:2px; padding:8px 14px; }
+  .btn-blue{ background:linear-gradient(180deg,#5f89a0,#3f6a82); color:#f0f6f8; font-size:13px; letter-spacing:2px; padding:8px 14px; }
+  .btn:disabled{ opacity:.55; cursor:not-allowed; }
+
+  /* 结果 */
+  #result{ margin-top:6px; }
+  .hidden{ display:none !important; }
+  .sec-title{ font-size:17px; color:var(--red); letter-spacing:3px; margin:22px 0 10px; display:flex; align-items:center; gap:8px; }
+  .sec-title::after{ content:""; flex:1; height:1px; background:linear-gradient(90deg,var(--gold),transparent); }
+  .plain{ font-size:14px; line-height:2; color:#4a3a22; background:rgba(255,255,255,.42);
+    border:1px solid #e6d6ab; border-left:3px solid var(--gold); border-radius:0 6px 6px 0;
+    padding:9px 13px; margin-top:8px; }
+  .plain.small{ font-size:12.5px; color:#6b5638; }
+
+  /* 总评 */
+  .sum-card{ display:flex; gap:18px; align-items:center; flex-wrap:wrap; background:rgba(255,255,255,.6);
+    border:1px solid #dcc592; border-radius:11px; padding:16px 18px; margin-top:4px; }
+  .ring{ --p:0; width:108px; height:108px; border-radius:50%; flex:0 0 auto; position:relative;
+    background:conic-gradient(var(--red) calc(var(--p)*1%), #e6d3a5 0); display:flex; align-items:center; justify-content:center; }
+  .ring::before{ content:""; position:absolute; inset:10px; border-radius:50%; background:#fbf3e0; }
+  .ring b{ position:relative; font-size:26px; color:var(--red); }
+  .ring small{ position:absolute; top:-14px; font-size:10px; letter-spacing:1px; color:#9a7a3f; }
+  .sum-info{ flex:1; min-width:230px; }
+  .sum-level{ font-size:22px; letter-spacing:3px; color:var(--red); font-weight:bold; }
+  .sum-phone{ font-size:18px; letter-spacing:2px; color:#4a3a22; margin-top:2px; }
+  .sum-note{ font-size:13px; color:#6b5638; line-height:1.9; margin-top:8px; }
+  .sum-stats{ display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; }
+  .sum-stats span{ font-size:12.5px; background:#f6ecd4; border:1px solid #e0cb9a; border-radius:20px; padding:2px 11px; }
+  .sum-stats .ok{ color:#8c2418; } .sum-stats .no{ color:#31586d; } .sum-stats .mid{ color:#7a6544; }
+
+  /* 拆解格 */
+  .gd-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); gap:9px; margin-top:10px; }
+  .gd{ background:rgba(255,255,255,.6); border:1px solid #dfca96; border-radius:8px; text-align:center;
+    padding:8px 4px 7px; position:relative; overflow:hidden; animation:up .45s ease both; }
+  @keyframes up{ from{opacity:0; transform:translateY(9px);} to{opacity:1; transform:none;} }
+  .gd .pos{ position:absolute; top:0; left:0; right:0; height:4px; }
+  .gd .pair{ font-size:24px; font-weight:bold; letter-spacing:1px; margin-top:3px; color:#3a2a10; }
+  .gd .nm{ font-size:12px; letter-spacing:1px; color:#6b5638; margin-top:2px; }
+  .gd .lv{ font-size:10px; color:#a5823a; letter-spacing:1px; margin-top:2px; }
+  .gd .wx{ font-size:10px; color:#8a7a5a; margin-top:1px; }
+  .gd.sp{ opacity:.62; }
+  .gd.sp .pair{ color:#7a6544; }
+  .t-j{ color:#8c2418; } .t-x{ color:#31586d; } .t-p{ color:#6b5638; } .t-s{ color:#7d6a8c; }
+  .b-j{ background:#b53c2e; } .b-x{ background:#4a7186; } .b-p{ background:#b39a63; } .b-s{ background:#9c8aa8; }
+  .gd.tail{ border:2px solid var(--gold); box-shadow:0 0 0 2px rgba(201,162,75,.28); }
+  .gd-tailmark{ position:absolute; top:-8px; right:-4px; font-size:9px; letter-spacing:1px; color:#7a5a16;
+    background:#f6e2ae; border:1px solid #caa85c; border-radius:9px; padding:0 5px; }
+  .g-note{ font-size:12.5px; color:#7a6544; line-height:1.9; margin-top:9px; }
+  .g-legend{ font-size:12px; color:#8a7a5a; margin-top:7px; line-height:1.8; }
+
+  /* 星占比条 */
+  .sb-list{ display:flex; flex-direction:column; gap:6px; background:rgba(255,255,255,.5);
+    border:1px solid #d8c08a; border-radius:8px; padding:12px 14px; }
+  .sb{ display:flex; align-items:center; gap:9px; }
+  .sb .sn{ width:46px; text-align:right; font-weight:bold; color:#6b5638; font-size:13px; letter-spacing:1px; }
+  .sb .bar{ flex:1; height:11px; background:#e8dcc0; border-radius:8px; overflow:hidden; }
+  .sb .bar i{ display:block; height:100%; border-radius:8px; transition:width .7s ease; }
+  .sb .sc{ width:34px; text-align:left; color:#7a6544; font-size:12px; }
+  .sb.zero .bar i{ background:#cdbf9d !important; }
+
+  /* 白话解说 */
+  .exp-list{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+  .exp{ display:flex; gap:10px; background:rgba(255,255,255,.5); border:1px solid #e2cfa0; border-radius:8px;
+    padding:9px 12px; font-size:13.5px; line-height:1.95; color:#4a3a22; }
+  .exp .ic{ flex:0 0 24px; height:24px; line-height:24px; text-align:center; border-radius:50%;
+    background:linear-gradient(180deg,#caa85c,#a9812f); color:#fff6e0; font-size:12px; }
+
+  /* 五行能量条（八字侧） */
+  .wx-grid{ display:flex; flex-direction:column; gap:6px; background:rgba(255,255,255,.5);
+    border:1px solid #d8c08a; border-radius:8px; padding:12px 14px; }
+  .wx-item{ display:flex; align-items:center; gap:10px; }
+  .wx-dot{ width:12px; height:12px; border-radius:50%; flex:0 0 auto; }
+  .wx-name{ width:22px; text-align:center; font-weight:bold; color:#6b5638; }
+  .wx-bar{ flex:1; height:12px; background:#eadfc2; border-radius:8px; overflow:hidden; }
+  .wx-bar i{ display:block; height:100%; border-radius:8px; transition:width .7s ease; }
+  .wx-num{ width:40px; text-align:right; color:#7a6544; font-size:13px; }
+
+  /* 四柱小排 */
+  .cols4{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:8px; }
+  .col-pillar{ background:rgba(255,255,255,.6); border:1px solid #dfca96; border-radius:8px; text-align:center; padding:9px 4px 7px; }
+  .col-pillar.day{ border-color:var(--red); box-shadow:0 0 0 1px rgba(163,51,39,.18); }
+  .col-pillar .nm{ font-size:11px; color:#8a7a5a; letter-spacing:2px; }
+  .col-pillar .gz{ font-size:26px; font-weight:bold; margin-top:3px; letter-spacing:1px; }
+  .col-pillar .gz small{ font-size:12px; font-weight:normal; }
+  .col-pillar .hz{ font-size:11.5px; color:#6b5638; margin-top:3px; line-height:1.6; }
+  .fate-line{ font-size:13px; color:#5c4a2e; line-height:2; margin-top:10px; }
+  .fate-line b{ color:var(--red); font-weight:normal; letter-spacing:1px; }
+
+  /* 幸运数字卡 */
+  .lucky-card{ background:linear-gradient(180deg,rgba(163,51,39,.07),rgba(163,51,39,.02));
+    border:1px dashed var(--red); border-radius:10px; padding:14px 16px; margin-top:12px; }
+  .lucky-head{ font-size:15px; letter-spacing:2px; color:var(--red); }
+  .lucky-nums{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+  .num-tile{ width:76px; height:86px; border-radius:10px; background:linear-gradient(180deg,#fff8e6,#f3e6c6);
+    border:2px solid var(--gold); text-align:center; padding-top:10px; box-shadow:0 4px 0 rgba(201,162,75,.35); }
+  .num-tile b{ display:block; font-size:40px; color:var(--red); line-height:1.1; }
+  .num-tile span{ font-size:12px; color:#7a6544; letter-spacing:1px; }
+  .num-tile em{ display:block; font-style:normal; font-size:13px; color:#4a3a22; margin-top:2px; }
+  .lucky-why{ font-size:13px; color:#6b5638; line-height:2; margin-top:10px; }
+
+  /* 契合与尾号 */
+  .fit-box{ display:flex; gap:12px; align-items:center; background:rgba(255,255,255,.5);
+    border:1px solid #d8c08a; border-radius:8px; padding:11px 14px; margin-top:10px; flex-wrap:wrap; }
+  .fit-pct{ font-size:24px; font-weight:bold; color:var(--red); min-width:58px; text-align:center; }
+  .fit-pct small{ font-size:11px; color:#8a7a5a; letter-spacing:1px; }
+  .fit-info{ flex:1; min-width:220px; }
+  .fit-info b{ color:var(--red); font-weight:normal; letter-spacing:1px; }
+  .fit-info p{ font-size:13px; color:#4a3a22; line-height:1.9; margin-top:4px; }
+  .tail-list{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+  .tail-item{ display:flex; gap:12px; align-items:center; background:rgba(255,255,255,.55);
+    border:1px solid #e0cb9a; border-radius:8px; padding:8px 13px; animation:up .5s ease both; }
+  .tail-item b{ font-size:24px; letter-spacing:3px; color:#3a2a10; min-width:120px; }
+  .tail-item .tp{ font-size:12px; color:#8a6d3b; line-height:1.7; flex:1; }
+  .tail-item .tg{ font-size:11px; color:#8c2418; background:#f7e5d8; border:1px solid #e2bda2; border-radius:14px; padding:1px 9px; white-space:nowrap; }
+  .callout{ font-size:13px; color:#4a3a22; background:#fff8e8; border:1px solid #e2cfa0; border-left:4px solid #caa85c;
+    border-radius:0 7px 7px 0; padding:9px 13px; margin-top:10px; line-height:2; }
+  .callout b{ color:var(--red); font-weight:normal; }
+
+  /* 结缘线索卡 */
+  .lead-card{ background:#fffaf0; border:1px dashed #caa85c; border-radius:11px; padding:16px 18px; margin-top:18px; }
+  .lead-card .card-title{ margin-bottom:4px; }
+  .lead-sub{ font-size:12.5px; color:#8a7a5a; line-height:1.9; margin-bottom:12px; }
+  .lead-grid{ display:flex; flex-wrap:wrap; gap:12px 16px; }
+  .lead-grid .fld{ flex:1 1 150px; }
+  .lead-grid .fld.wide{ flex:1 1 100%; }
+  .lead-ok{ text-align:center; padding:18px 10px; }
+  .lead-ok b{ font-size:18px; letter-spacing:3px; color:var(--red); }
+
+  /* 店主后台 */
+  .admin-area{ width:100%; max-width:1000px; margin-top:18px; }
+  .admin-box{ background:rgba(247,238,218,.96); border:2px solid var(--gold); border-radius:12px; padding:16px 18px; }
+  .admin-box h3{ color:var(--red); letter-spacing:3px; font-size:16px; }
+  .admin-box table{ width:100%; border-collapse:collapse; font-size:12.5px; margin-top:10px; }
+  .admin-box th,.admin-box td{ border:1px solid #d8c08a; padding:5px 7px; text-align:left; vertical-align:top; }
+  .admin-box th{ background:#f2e6c6; color:#6b5638; font-weight:normal; }
+  .admin-box .empty{ color:#8a7a5a; padding:12px 0; font-size:13px; }
+  .admin-box .row-btns{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .admin-tip{ font-size:12px; color:#6b5638; line-height:1.9; background:#f6ecd4; border:1px solid #e0cb9a;
+    border-radius:7px; padding:8px 11px; margin-top:10px; }
+
+  /* 八星速查 */
+  details.cheat{ margin-top:16px; }
+  details.cheat summary{ cursor:pointer; font-size:14px; letter-spacing:2px; color:var(--red); list-style:none; }
+  details.cheat summary::-webkit-details-marker{ display:none; }
+  details.cheat summary::before{ content:"▸ "; color:var(--gold); }
+  details.cheat[open] summary::before{ content:"▾ "; }
+  .cheat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+  .cheat-item{ display:flex; gap:10px; background:rgba(255,255,255,.5); border:1px solid #e2cfa0; border-radius:8px; padding:8px 11px; }
+  .cheat-item .cn{ flex:0 0 44px; font-size:15px; font-weight:bold; padding-top:3px; letter-spacing:1px; }
+  .cheat-item .cd{ flex:1; }
+  .cheat-item .cd b{ font-weight:normal; font-size:13px; color:#3a2a10; }
+  .cheat-item .cd .nn{ font-size:11.5px; color:#a5823a; letter-spacing:1px; }
+  .cheat-item .cd p{ font-size:11.5px; color:#6b5638; line-height:1.7; margin-top:2px; }
+  @media (max-width:760px){ .intro{ grid-template-columns:1fr; } .cheat-grid{ grid-template-columns:1fr; } }
+  @media (max-width:640px){
+    body{ padding:18px 10px 36px; }
+    .frame{ padding:22px 13px 24px; }
+    .shop-name{ font-size:25px; letter-spacing:5px; }
+    .plaque-top{ font-size:11px; letter-spacing:4px; }
+    .sum-card{ padding:13px 13px; }
+    .col-pillar .gz{ font-size:21px; }
+    .num-tile{ width:64px; height:74px; } .num-tile b{ font-size:32px; }
+    .tail-item{ flex-direction:column; align-items:flex-start; gap:4px; }
+  }
+  .toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+    background:rgba(38,22,8,.92); color:#f7e3b0; font-size:14px; letter-spacing:2px;
+    border:1px solid var(--gold); border-radius:30px; padding:10px 22px; opacity:0; pointer-events:none;
+    transition:all .25s; z-index:99; max-width:88vw; text-align:center; }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .disclaimer{ margin-top:18px; font-size:12px; color:#8a7a5a; line-height:1.9; text-align:center;
+    border-top:1px dashed var(--gold); padding-top:12px; }
+  .foot-admin{ margin-top:10px; text-align:center; font-size:11px; color:#9a8a6a; }
+  .foot-admin a{ color:#9a8a6a; text-decoration:none; border-bottom:1px dashed #b3a27f; }
+  .card-title .tick{ font-size:12.5px; letter-spacing:1px; font-weight:normal; margin-left:4px; }
+
+  /* ============ 浮层（随喜添灯 / 加馆主微信） ============ */
+  .overlay{ display:none; position:fixed; inset:0; z-index:80; background:rgba(18,10,3,.68);
+    align-items:center; justify-content:center; padding:18px; }
+  .overlay.show{ display:flex; }
+  .pay-modal{ position:relative; width:100%; max-width:410px; max-height:92vh; overflow:auto;
+    background:linear-gradient(180deg,#f8eed6 0%,#eedcb4 100%); border:2px solid var(--gold); border-radius:12px;
+    box-shadow:0 18px 50px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.35);
+    padding:24px 22px 20px; text-align:center; animation:cardUp .35s ease; }
+  @keyframes cardUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
+  .pay-x{ position:absolute; top:6px; right:10px; font-size:16px; cursor:pointer; color:#a08a5e;
+    background:none; border:none; font-family:inherit; padding:4px 8px; }
+  .pay-x:hover{ color:var(--red); }
+  .pay-title{ font-size:21px; letter-spacing:6px; color:var(--red); font-weight:bold; }
+  .pay-sub{ margin-top:8px; font-size:13.5px; color:#7a6a4a; letter-spacing:1px; line-height:1.8; }
+  .pay-msg{ margin-top:10px; font-size:14px; line-height:1.9; color:#4b3a20; background:rgba(201,162,75,.13);
+    border-radius:6px; padding:9px 12px; text-align:justify; }
+  .pay-qrs{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; align-items:flex-start; margin-top:14px; }
+  .pay-qr-main{ width:55%; min-width:170px; }
+  .pay-qr-main img{ width:100%; display:block; border:4px solid #fff; border-radius:6px; background:#fff;
+    box-shadow:0 3px 10px rgba(0,0,0,.2); }
+  .pay-qr-sub{ width:37%; min-width:122px; }
+  .pay-qr-sub img{ width:100%; display:block; border:4px solid #fff; border-radius:6px; background:#fff;
+    box-shadow:0 3px 10px rgba(0,0,0,.2); }
+  .pay-cap{ margin-top:6px; font-size:12.5px; color:#8a6d3b; letter-spacing:1px; line-height:1.6; }
+  .pay-qr-only{ margin-top:14px; }
+  .pay-qr-only img{ width:230px; max-width:74%; display:inline-block; border:4px solid #fff; border-radius:6px;
+    background:#fff; box-shadow:0 3px 10px rgba(0,0,0,.2); }
+  .pay-qr-main.missing .pay-qr-main-img{ display:none; }
+  .pay-miss{ display:none; font-size:13px; color:#a33327; line-height:1.9; background:rgba(163,51,39,.06);
+    border:1px dashed #c98a6f; border-radius:6px; padding:10px 12px; text-align:justify; margin-bottom:8px; }
+  .pay-qr-main.missing .pay-miss{ display:block; }
+  .pay-actions{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .pay-note{ margin-top:12px; font-size:12px; color:#a08a5e; letter-spacing:.5px; line-height:1.8; text-align:justify; }
+  @media (max-width:520px){ .pay-modal{ padding:20px 15px 16px; } }
+</style>
+</head>
+<body>
+
+<div class="xz-nav" id="topNav"></div>
+
+<div class="frame">
+  <header>
+    <div class="plaque-top" id="plaqueTop"></div>
+    <div class="shop-name" id="shopName"></div>
+    <div class="plaque-line" id="plaqueLine"></div>
+    <div class="motto" id="shopMotto"></div>
+  </header>
+
+  <hr class="divider">
+
+  <div class="intro">
+    <div class="intro-card"><b>什么是八星磁场</b>
+      <p>数字能量学把号码两两成组，归纳为八种磁场——吉星「<span class="chip g">天医</span><span class="chip g">生气</span><span class="chip g">延年</span><span class="chip n">伏位</span>」，凶星「<span class="chip b">绝命</span><span class="chip b">五鬼</span><span class="chip b">六煞</span><span class="chip b">祸害</span>」。号码由左至右，磁场一段段流转。</p>
+    </div>
+    <div class="intro-card"><b>为什么还要配八字</b>
+      <p>同是好号，配错了人也会打折扣。结合出生时辰推出日主与喜用五行，把「数字五行」对上「命中宜补之气」，才算量身而选。</p>
+    </div>
+    <div class="intro-card"><b>看号先看尾</b>
+      <p>相邻两两成组、越靠尾越要紧，收尾两三位定后劲。0 与 5 属特殊数字，5 主显化、0 主藏伏。磁场是助缘，不是判词。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">一 · 报上您的手机号<span class="tick" id="dailyTick"></span></div>
+    <div class="form-row-phone">
+      <div class="fld phone">
+        <label>手机号码<i>11 位，大陆号码</i></label>
+        <input type="text" id="phInput" class="big" maxlength="13" placeholder="138 1234 5678" autocomplete="off" inputmode="numeric">
+      </div>
+      <button class="btn btn-main" id="runBtn" style="margin-bottom:2px;">开 始 分 析</button>
+    </div>
+    <div class="hint">只填号码：纯「磁场角度」分析（吉凶拆解 · 总评 · 解读）。想进一步拿到「本命幸运数字 + 专属尾号建议」，请再报上生辰，两点交会才更准。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">二 · 报上出生生辰 <span style="font-size:12px;color:#a5823a;letter-spacing:0;">（选填 · 用于推喜用五行）</span></div>
+    <div class="form-grid">
+      <div class="fld">
+        <label>出生日期</label>
+        <input type="date" id="bdDate" max="2026-12-31" min="1901-01-01">
+      </div>
+      <div class="fld">
+        <label>出生时间<i>24 小时制</i></label>
+        <input type="time" id="bdTime" value="12:00">
+      </div>
+      <div class="fld">
+        <label>性别<i>仅作参考</i></label>
+        <select id="bdSex">
+          <option value="1">男</option>
+          <option value="0">女</option>
+        </select>
+      </div>
+    </div>
+    <label class="check-row" style="margin-top:12px;">
+      <input type="checkbox" id="noTime"> 不知道具体时辰——按“午时（12 点）”粗参，仅影响时柱一柱，结果同样可用
+    </label>
+  </div>
+
+  <!-- ================= 结果区 ================= -->
+  <div id="result" class="hidden">
+
+    <div class="sec-title">号码磁场 · 总评</div>
+    <div class="sum-card">
+      <div class="ring" id="rRing"><small>吉 气</small><b>0</b></div>
+      <div class="sum-info">
+        <div class="sum-level" id="rLevel"></div>
+        <div class="sum-phone" id="rPhone"></div>
+        <div class="sum-stats" id="rStats"></div>
+        <div class="sum-note" id="rNote"></div>
+      </div>
+    </div>
+
+    <div class="sec-title">磁场拆解 · 逐段观气</div>
+    <div class="gd-grid" id="rGroups"></div>
+    <div class="g-note" id="rGN"></div>
+    <div class="g-legend" id="rLegend"></div>
+
+    <div class="sec-title">白话解说</div>
+    <div class="exp-list" id="rTexts"></div>
+
+    <div class="sec-title">八星分布 · 一望而知</div>
+    <div class="sb-list" id="rStars"></div>
+
+    <!-- 命理契合（八字侧，缺时提示补生辰） -->
+    <div id="fortuneBox"></div>
+
+  </div>
+
+  <hr class="divider">
+  <details class="cheat">
+    <summary>八星磁场速查表（随时翻看）</summary>
+    <div class="cheat-grid" id="cheatGrid"></div>
+  </details>
+
+  <!-- 留灯结缘（页底 · 加馆主微信详聊） -->
+  <div class="lead-card">
+    <div class="card-title">留灯结缘 · 想解决的方向</div>
+    <div class="lead-sub">把您最想解决的方向写下来，点「留灯」会弹出馆主微信——您写的内容会自动复制成加好友备注，馆主照着备注为您逐一过号、细说磁场。免费自测之外还拿不定主意的，这里便是馆主坐堂处。</div>
+    <div class="lead-grid">
+      <div class="fld wide">
+        <label>想解决的方向</label>
+        <textarea id="leadWish" placeholder="如：想看现用号磁场好不好 · 想换个开运尾号 · 财运 / 事业 / 姻缘 / 健康哪方面不顺手……"></textarea>
+      </div>
+    </div>
+    <div class="btn-row" style="justify-content:flex-start;margin-top:12px;">
+      <button class="btn btn-main" id="leadBtn" style="font-size:15px;padding:10px 24px;">留 灯 给 馆 主</button>
+      <span style="font-size:12px;color:#9a8a6a;letter-spacing:1px;">加微信详聊 · 问题不外传</span>
+    </div>
+  </div>
+
+  <div class="disclaimer" id="disclaimer"></div>
+  <div class="foot-admin">店主入口：<a href="#admin">后台查看客户留灯</a></div>
+</div>
+
+<!-- ===== 随喜添灯（每日免费分析用罄后的打赏浮层） ===== -->
+<div class="overlay" id="payOverlay">
+  <div class="pay-modal">
+    <button class="pay-x" id="payClose" title="合上">✕</button>
+    <div class="pay-title">数 缘 已 满 · 随 喜 添 灯</div>
+    <div class="pay-sub" id="paySub"></div>
+    <div class="pay-msg" id="payMsg"></div>
+    <div class="pay-qrs">
+      <div class="pay-qr-main" id="payQrMain">
+        <img class="pay-qr-main-img" src="wechat-pay.png" alt="店主微信收款码" title="店主微信收款码">
+        <div class="pay-miss">店主收款码尚未挂出，暂请扫码加微信 <b id="payWxId"></b>，转账随喜，恭候大驾。</div>
+        <div class="pay-cap">微信收款码 · 一测随缘</div>
+      </div>
+      <div class="pay-qr-sub">
+        <img src="wechat-qrcode.png" alt="店主微信二维码" title="加微信细谈">
+        <div class="pay-cap">或加微信细谈</div>
+      </div>
+    </div>
+    <div class="pay-actions">
+      <button class="btn btn-main" id="payDone">我 已 随 喜 · 继 续 分 析</button>
+      <button class="btn btn-ghost" id="payLater">明 日 再 来</button>
+    </div>
+    <div class="pay-note">诚信在心，号亦如实 —— 本站无法自动核验款项，全靠君一问心。</div>
+  </div>
+</div>
+
+<!-- ===== 留灯 · 加馆主微信（问题已复制为备注） ===== -->
+<div class="overlay" id="leadOverlay">
+  <div class="pay-modal">
+    <button class="pay-x" id="leadClose" title="合上">✕</button>
+    <div class="pay-title">加 馆 主 微 信</div>
+    <div class="pay-sub" id="leadSub"></div>
+    <div class="pay-qr-only">
+      <img src="wechat-qrcode.png" alt="店主微信二维码" title="扫一扫加馆主微信">
+      <div class="pay-cap">扫一扫 · 加馆主微信，备注已替您备好</div>
+    </div>
+    <div class="pay-actions">
+      <button class="btn btn-main" id="leadCopyBtn">已 复 制 · 去 微 信 粘 贴 备 注</button>
+      <button class="btn btn-ghost" id="leadCancel">先 合 上 · 再 自 测 一 会</button>
+    </div>
+    <div class="pay-note">加好友时把刚复制的那句话粘贴到「备注」栏发送即可；馆主看到备注即知来意，会尽快回复。</div>
+  </div>
+</div>
+
+<!-- 店主后台 -->
+<div class="admin-area" id="adminArea" hidden>
+  <div class="admin-box">
+    <h3>🔑 客户留灯 · 后台</h3>
+    <p class="plain small" style="margin-top:8px;">新版流程：客户点「留灯」即弹店主微信二维码并复制“方向”为加好友备注，客户扫码加微信详聊。本后台只留本机提交过的留灯记录；若另配了 <b>data.js → SHOP.collectEndpoint</b>（Formspree / Getform 等），内容也会同步转发。详见项目 README。</p>
+    <div id="adminCount"></div>
+    <div id="adminRows"></div>
+    <div class="row-btns">
+      <button class="btn btn-blue" id="exportCsv">导出 CSV</button>
+      <button class="btn btn-ghost" id="copyCsv">复制为表格文本</button>
+      <button class="btn btn-main" id="clearLeads">清空全部</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</body>
+</html>
